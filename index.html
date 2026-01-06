@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Fifth Amendment Scenario Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:20px; }
+    h1 { text-align:center; margin: 0 0 8px 0; }
+    .sub { text-align:center; color:#555; margin:0 0 18px 0; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .status { background:#111; color:#fff; padding:10px 12px; border-radius:10px; margin-bottom:14px; font-weight:800; }
+    .q { background:#fff; padding:16px; margin-bottom:14px; border-radius:10px; border:1px solid #ddd; }
+    .answers label { display:block; margin:8px 0; cursor:pointer; line-height:1.25; }
+    button { margin-top:10px; padding:8px 12px; cursor:pointer; font-weight:800; border-radius:10px; border:1px solid #ddd; background:#fff; }
+    .correct { color:#0b7a2a; font-weight:900; }
+    .incorrect { color:#b00020; font-weight:900; }
+    .explain { margin-top:8px; color:#222; }
+    .small { font-size: 0.92em; color:#555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Fifth Amendment – Scenario Quiz</h1>
+    <p class="sub">Click an answer → Check → get right/wrong + explanation</p>
+
+    <div id="status" class="status">Loaded ✅ If you see this, the quiz script is running.</div>
+
+    <div id="quiz"></div>
+  </div>
+
+<script>
+  // A=0, B=1, C=2, D=3
+  var quizData = [
+    {
+      q: "1) (Custody + interrogation) Officers arrest Marcus for burglary and transport him to the station. While booking Marcus, an officer says, “This is a lot easier when people explain themselves.” Marcus responds, “I just needed the money.” No Miranda warnings were given. At trial, the statement is:",
+      a: [
+        "A. Admissible because it was voluntary.",
+        "B. Admissible because booking questions do not require Miranda.",
+        "C. Inadmissible because it was the functional equivalent of interrogation.",
+        "D. Inadmissible because Marcus had already been arrested."
+      ],
+      c: 2,
+      e: "Miranda covers custodial interrogation. Comments reasonably likely to elicit an incriminating response can be the functional equivalent of questioning → interrogation without warnings."
+    },
+    {
+      q: "2) (Not in custody) Detectives visit Elena at her home regarding fraud. They tell her she is not under arrest and is free to ask them to leave. During a 30-minute interview at her kitchen table, Elena admits falsifying records. No Miranda warnings were given. The statement is:",
+      a: [
+        "A. Inadmissible because she was a suspect.",
+        "B. Inadmissible because the interview was lengthy.",
+        "C. Admissible because Elena was not in custody.",
+        "D. Admissible only if she signed a waiver."
+      ],
+      c: 2,
+      e: "Miranda applies only to custodial interrogation. Voluntary, at-home interviews typically are non-custodial if a reasonable person feels free to end it."
+    },
+    {
+      q: "3) (Right to silence) After Miranda, Kevin states, “I don’t want to talk about this.” Officers stop questioning. Two hours later, an officer questions Kevin again about the SAME robbery without re-Mirandizing. Kevin confesses. Best answer:",
+      a: [
+        "A. Admissible because time passed.",
+        "B. Inadmissible because Kevin invoked his right to remain silent and police did not scrupulously honor it.",
+        "C. Admissible because a new officer questioned him.",
+        "D. Admissible because Kevin did not ask for a lawyer."
+      ],
+      c: 1,
+      e: "After a silence invocation, police must scrupulously honor it. A re-approach may be allowed only with factors like time + fresh warnings + no badgering. Here no fresh warnings."
+    },
+    {
+      q: "4) (Ambiguous counsel) After Miranda, Sarah says, “Maybe I should talk to a lawyer.” Officers continue questioning and she confesses. The confession is:",
+      a: [
+        "A. Admissible because Sarah did not unambiguously invoke counsel.",
+        "B. Inadmissible because any mention of 'lawyer' stops questioning.",
+        "C. Inadmissible because officers must always clarify.",
+        "D. Admissible only if written waiver."
+      ],
+      c: 0,
+      e: "Invocation of counsel must be clear and unambiguous. 'Maybe' is usually treated as ambiguous, so police may continue (though clarification is best practice)."
+    },
+    {
+      q: "5) (Coercion / voluntariness) Officers tell Jamal: “If you don’t confess, we’ll arrest your girlfriend and your kids will go to foster care.” Jamal confesses. Most accurate:",
+      a: [
+        "A. Admissible because police may use threats.",
+        "B. Inadmissible because the confession was coerced/involuntary.",
+        "C. Admissible because Jamal was in custody.",
+        "D. Admissible because he waived Miranda."
+      ],
+      c: 1,
+      e: "Voluntariness is separate from Miranda. Severe threats about family/custody can overbear free will → involuntary statement."
+    },
+    {
+      q: "6) (Undercover listening) After invoking, Leo is in a holding cell. A cellmate who is secretly an undercover officer does NOT question him, just listens. Leo blurts out details of the crime. At trial, the statement is:",
+      a: [
+        "A. Inadmissible due to Miranda violation.",
+        "B. Inadmissible due to Fifth Amendment coercion.",
+        "C. Admissible because there was no interrogation—voluntary statement to an undercover listener.",
+        "D. Inadmissible unless waiver form signed."
+      ],
+      c: 2,
+      e: "Miranda requires custodial interrogation. Voluntary statements to an undercover listener (no questioning) are generally admissible."
+    },
+    {
+      q: "7) (Implied waiver) Tina is Mirandized. When asked if she understands, she says nothing but immediately starts explaining her involvement for 10 minutes. Her statements are:",
+      a: [
+        "A. Inadmissible without express verbal waiver.",
+        "B. Admissible because she impliedly waived by speaking after warnings.",
+        "C. Inadmissible because silence is invocation.",
+        "D. Admissible only if recorded."
+      ],
+      c: 1,
+      e: "A waiver can be implied: warnings + understanding + voluntary speaking. Express written waiver not required."
+    },
+    {
+      q: "8) (Grand jury immunity) Ryan is subpoenaed to testify. He invokes the Fifth. The court grants use-and-derivative-use immunity. Which is TRUE?",
+      a: [
+        "A. Ryan cannot be prosecuted for any crimes discussed (transactional immunity).",
+        "B. The testimony and its fruits can’t be used against Ryan; he can be compelled to testify.",
+        "C. Immunity only applies to state prosecutions.",
+        "D. Ryan may still refuse because the Fifth is absolute."
+      ],
+      c: 1,
+      e: "Use/derivative-use immunity blocks the government from using compelled testimony (and evidence derived from it) against the witness, so the witness can be compelled to testify."
+    },
+    {
+      q: "9) (Public safety exception limit) Officers respond to shots fired, handcuff Evan, and immediately ask before Miranda: “Where is the gun?” Evan answers. Then officer says: “If a kid finds it and dies, that’s on you.” Evan admits firing it. Best answer:",
+      a: [
+        "A. Both statements admissible under public safety exception.",
+        "B. First admissible (public safety). Second likely inadmissible as custodial interrogation beyond immediate safety need.",
+        "C. Both inadmissible because custody always requires Miranda.",
+        "D. Second admissible because moral appeal is not interrogation."
+      ],
+      c: 1,
+      e: "Public safety exception covers limited questions to neutralize immediate danger (locating gun). After that, continued elicitation in custody without Miranda is likely interrogation → suppress second statement."
+    },
+    {
+      q: "10) (Privilege is personal) David says, “I plead the Fifth for my sister” when officers ask where her business records are. Best answer:",
+      a: [
+        "A. Valid because he can invoke for family.",
+        "B. Valid because business records are always privileged.",
+        "C. Invalid because the privilege is personal—only the sister can invoke her own privilege.",
+        "D. Invalid only if David is in custody."
+      ],
+      c: 2,
+      e: "Fifth Amendment privilege against self-incrimination is personal. One person generally cannot invoke it to protect another."
+    }
+  ];
+
+  function buildQuiz() {
+    var quiz = document.getElementById("quiz");
+    quiz.innerHTML = "";
+
+    for (var i = 0; i < quizData.length; i++) {
+      var div = document.createElement("div");
+      div.className = "q";
+
+      var html = "";
+      html += "<div><b>Q" + (i+1) + ".</b> " + quizData[i].q + "</div>";
+      html += "<div class='answers'>";
+
+      for (var j = 0; j < quizData[i].a.length; j++) {
+        html += "<label><input type='radio' name='q" + i + "' value='" + j + "'> " + quizData[i].a[j] + "</label>";
+      }
+
+      html += "</div>";
+      html += "<button onclick='checkAnswer(" + i + ")'>Check</button>";
+      html += "<div id='r" + i + "' class='small'></div>";
+
+      div.innerHTML = html;
+      quiz.appendChild(div);
+    }
+  }
+
+  function checkAnswer(i) {
+    var sel = document.querySelector("input[name='q" + i + "']:checked");
+    var res = document.getElementById("r" + i);
+
+    if (!sel) {
+      res.innerHTML = "<span class='incorrect'>Select an answer first.</span>";
+      return;
+    }
+
+    var picked = parseInt(sel.value, 10);
+    var correct = quizData[i].c;
+
+    if (picked === correct) {
+      res.innerHTML = "<span class='correct'>Correct.</span><div class='explain'>" + quizData[i].e + "</div>";
+    } else {
+      res.innerHTML = "<span class='incorrect'>Incorrect.</span><div class='explain'>" + quizData[i].e + "</div>";
+    }
+  }
+
+  // expose function for button onclick
+  window.checkAnswer = checkAnswer;
+
+  buildQuiz();
+</script>
+</body>
+</html>
